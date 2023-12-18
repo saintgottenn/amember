@@ -73,7 +73,7 @@ class ToolsController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -84,7 +84,9 @@ class ToolsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $tool = Tool::find($id);
+
+        return view("voyager::tools.edit", compact('tool'));
     }
 
     /**
@@ -96,7 +98,30 @@ class ToolsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'link' => 'required',
+            'benefits' => 'nullable|array',
+            'description' => 'nullable|string',
+        ]);
+
+        $tool = Tool::find($id);
+        $tool->title = $request->name;
+        $tool->slug = $request->slug;
+        $tool->link = $request->link;
+        $tool->description = $request->description;
+        $tool->benefits = json_encode($request->benefits);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('public/tools');
+            $tool->image = Storage::url($imagePath);
+        }
+
+        $tool->save();
+
+        return redirect()->route('admin.tools.index');
     }
 
     /**
