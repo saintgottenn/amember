@@ -16,6 +16,7 @@ use App\Http\Livewire\Auth\BusinessPurchase;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Voyager\ToolsController;
+use App\Http\Controllers\Voyager\PackagesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,7 +66,7 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::group(['as' => 'admin.'], function() {
         Route::resource('tools', ToolsController::class);
-        
+        Route::resource('packages', PackagesController::class);
     });
 
 });

@@ -1,28 +1,35 @@
 @extends('voyager::master')
 
+@section('page_title', 'Create Tool')
+
 @section('content')
   <h1>Products(Tools) Creation</h1>
   <form action="{{ route('admin.tools.store') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" name="name" class="form-control" id="name" required>
+          <input type="text" name="name" class="form-control" id="name" value="{{old('name')}}" required>
       </div>
 
       <div class="form-group">
           <label for="slug">Slug</label>
-          <input type="text" name="slug" class="form-control" id="slug" required>
+          <input type="text" name="slug" class="form-control" id="slug" value="{{old('slug')}}" required>
+      </div>
+      
+      <div class="form-group">
+          <label for="price">Price</label>
+          <input type="number" name="price" class="form-control" id="price" value="{{old('price')}}" required>
       </div>
 
       <div class="form-group">
           <label for="image">Image</label>
-          <input type="file" name="image" class="form-control" id="image" onchange="previewImage(event)">
+          <input type="file" name="image" class="form-control" id="image"  onchange="previewImage(event)">
           <img id="imagePreview" src="#" alt="Image preview" style="max-width: 200px; margin-top: 10px; display: none;">
       </div>
 
       <div class="form-group">
           <label for="link">Link</label>
-          <input type="text" name="link" class="form-control" id="link">
+          <input type="text" name="link" class="form-control" id="link" value="{{old('link')}}">
       </div>
 
       <div class="form-group">
@@ -35,7 +42,7 @@
 
       <div class="form-group">
           <label for="description">Description</label>
-          <textarea name="description" class="form-control" id="description"></textarea>
+          <textarea name="description" class="form-control" id="description" value="{{old('description')}}"></textarea>
       </div>
 
       @if ($errors->any())

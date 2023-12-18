@@ -1,5 +1,7 @@
 @extends('voyager::master')
 
+@section('page_title', 'Tools')
+
 @section('content')
     <h1>Products(Tools) Dashboard</h1>
 
@@ -13,9 +15,9 @@
       <table class="table table-bordered">
           <thead>
               <tr>
-                  <th>ID</th>
                   <th>Name</th>
                   <th>Slug</th>
+                  <th>Price</th>
                   <th>Image</th>
                   <th>Link</th>
                   <th>Benefits</th>
@@ -26,12 +28,18 @@
           <tbody>
               @foreach($tools as $tool)
                   <tr>
-                      <td>{{ $tool->id }}</td>
-                      <td>{{ $tool->name }}</td>
+                      <td>{{ $tool->title }}</td>
                       <td>{{ $tool->slug }}</td>
+                      <td>{{ $tool->price }}</td>
                       <td><img src="{{ asset($tool->image) }}" width="100px"></td>
                       <td>{{ $tool->link }}</td>
-                      <td>{{ $tool->benefits }}</td>
+                      <td>
+                        @if (json_decode($tool->benefits, true))
+                            @foreach ($tool->benefits as $benefit)
+                                <div>{{$loop->iteration . '. ' . $benefit}}</div>
+                            @endforeach
+                        @endif
+                      </td>
                       <td>{{ $tool->description }}</td>
                       <td>
                           <a href="{{ route('admin.tools.edit', $tool->id) }}" class="btn btn-primary">

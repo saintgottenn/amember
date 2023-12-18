@@ -1,5 +1,7 @@
 @extends('voyager::master')
 
+@section('page_title', 'Edit Tool')
+
 @section('content')
   <h1>Edit Tool</h1>
   <form action="{{ route('admin.tools.update', $tool->id) }}" method="POST" enctype="multipart/form-data">
@@ -14,6 +16,11 @@
       <div class="form-group">
           <label for="slug">Slug</label>
           <input type="text" name="slug" class="form-control" id="slug" value="{{ $tool->slug }}" required>
+      </div>
+
+      <div class="form-group">
+          <label for="price">Price</label>
+          <input type="number" name="price" class="form-control" id="price" value="{{ $tool->price }}" required>
       </div>
 
       <div class="form-group">

@@ -13,15 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tools', function (Blueprint $table) {
+        Schema::create('packages', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('slug')->unique();
-            $table->decimal('price', 18, 2);
-            $table->string('image')->nullable();
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->json('benefits')->nullable(); 
-            $table->string('link');
+            $table->decimal('price', 18, 2);
+            $table->json('tools_included'); 
             $table->timestamps();
         });
     }
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tools');
+        Schema::dropIfExists('packages');
     }
 };

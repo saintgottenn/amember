@@ -46,12 +46,14 @@ class ToolsController extends Controller
             'link' => 'required',
             'benefits' => 'nullable|array',
             'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
         ]);
 
         $tool = new Tool();
         $tool->title = $request->name;
         $tool->slug = $request->slug;
         $tool->link = $request->link;
+        $tool->price = $request->price;
         $tool->description = $request->description;
         $tool->benefits = json_encode($request->benefits);
 
@@ -105,12 +107,14 @@ class ToolsController extends Controller
             'link' => 'required',
             'benefits' => 'nullable|array',
             'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
         ]);
 
         $tool = Tool::find($id);
         $tool->title = $request->name;
         $tool->slug = $request->slug;
         $tool->link = $request->link;
+        $tool->price = $request->price;
         $tool->description = $request->description;
         $tool->benefits = json_encode($request->benefits);
 
