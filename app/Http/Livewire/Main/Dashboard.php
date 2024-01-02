@@ -3,6 +3,8 @@
 namespace App\Http\Livewire\Main;
 
 use Livewire\Component;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class Dashboard extends Component
 {

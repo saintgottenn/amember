@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Events\LoginEvent;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,7 @@ class AuthController extends Controller
             ]);
 
             $data['is_business'] = true;
+            $data['last_login_at'] = now();
 
             return $this->finalRegister(array_merge($data, session('registerData')));
         }
@@ -61,6 +63,8 @@ class AuthController extends Controller
         
         Auth::login($user);
 
+        LoginEvent::dispatch($user);
+
         return redirect()->route('dashboard');
     }
 
@@ -73,6 +77,10 @@ class AuthController extends Controller
         $creds = [$fieldType => $login, 'password' => $request->password];
 
         if(Auth::attempt($creds)) {
+            $user = Auth::user();
+            
+            LoginEvent::dispatch($user);
+
             return redirect()->route('dashboard');
         } else {
             return back()->withInput()->withErrors(['login' => 'User not found']);

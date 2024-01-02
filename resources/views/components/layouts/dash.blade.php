@@ -15,7 +15,10 @@
                 </a>
                 <a href="{{route('summaryOrder')}}">
                     <img src="{{asset('img/icons/order.svg')}}" alt="icon">
-                    Summary Order 
+                    Cart
+                    @if(session('cart') && count(session('cart')))
+                        <span class="cart-count">{{count(session('cart'))}}</span>
+                    @endif
                 </a>
                 <a href="{{route('support')}}">
                     <img src="{{asset('img/icons/support.svg')}}" alt="icon">

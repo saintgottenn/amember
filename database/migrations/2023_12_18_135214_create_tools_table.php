@@ -16,12 +16,10 @@ return new class extends Migration
         Schema::create('tools', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug')->unique();
-            $table->decimal('price', 18, 2);
+            $table->string('price');
             $table->string('image')->nullable();
             $table->text('description')->nullable();
             $table->json('benefits')->nullable(); 
-            $table->string('link');
             $table->timestamps();
         });
     }

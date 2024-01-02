@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Voyager;
 
 use App\Models\Tool;
+use App\Models\ToolPrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -41,21 +42,21 @@ class ToolsController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'link' => 'required',
             'benefits' => 'nullable|array',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
         ]);
 
+        $nonEmptyBenefits = array_filter($request->input('benefits', []), function($value) {
+            return !empty($value); 
+        });
+
         $tool = new Tool();
         $tool->title = $request->name;
-        $tool->slug = $request->slug;
-        $tool->link = $request->link;
         $tool->price = $request->price;
         $tool->description = $request->description;
-        $tool->benefits = json_encode($request->benefits);
+        $tool->benefits = json_encode($nonEmptyBenefits);
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('public/tools');
@@ -63,8 +64,28 @@ class ToolsController extends Controller
         }
 
         $tool->save();
+        
+        $this->setCountryPrices($request->country_prices, $tool->id);
 
         return redirect()->route('admin.tools.index');
+    }
+
+    private function setCountryPrices($countryPrices, $id)
+    {
+        $countryPrices = json_decode($countryPrices, true) ?? [];
+
+        $countryPrices = array_filter($countryPrices, function($value) {
+            return !empty($value); 
+        });
+
+        if(!empty($countryPrices)) {
+            foreach($countryPrices as $countryCode => $price) {
+                ToolPrice::updateOrCreate(
+                    ['tool_id' => $id, 'country_code' => $countryCode],
+                    ['price' => $price ? $price : 0],
+                );
+            }
+        }
     }
 
     /**
@@ -88,7 +109,28 @@ class ToolsController extends Controller
     {
         $tool = Tool::find($id);
 
-        return view("voyager::tools.edit", compact('tool'));
+        $countryPrices = $this->getCountryPrices($tool);
+        
+        return view("voyager::tools.edit", compact('tool', 'countryPrices'));
+    }
+
+    private function getCountryPrices($tool)
+    {
+        $countryPrices = null;
+
+        if($tool) {
+            $prices = $tool->prices;
+
+            foreach($prices as $priceObj) {
+                $countryPrices[$priceObj->country_code] = $priceObj->price;
+            }
+        }
+
+        if($countryPrices) {
+            $countryPrices = json_encode($countryPrices);
+        }
+
+        return $countryPrices;
     }
 
     /**
@@ -102,21 +144,21 @@ class ToolsController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'link' => 'required',
             'benefits' => 'nullable|array',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
         ]);
 
+        $nonEmptyBenefits = array_filter($request->input('benefits', []), function($value) {
+            return !empty($value); 
+        });
+
         $tool = Tool::find($id);
         $tool->title = $request->name;
-        $tool->slug = $request->slug;
-        $tool->link = $request->link;
         $tool->price = $request->price;
         $tool->description = $request->description;
-        $tool->benefits = json_encode($request->benefits);
+        $tool->benefits = json_encode($nonEmptyBenefits);
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('public/tools');
@@ -124,6 +166,8 @@ class ToolsController extends Controller
         }
 
         $tool->save();
+
+        $this->setCountryPrices($request->country_prices, $tool->id);
 
         return redirect()->route('admin.tools.index');
     }

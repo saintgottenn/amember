@@ -139,7 +139,7 @@
         </div>
         <div class="col-md-6">
             <button type="submit" class="form-btn" name="continue">
-                Continue
+                Skip
             </button>
         </div>
     </div>

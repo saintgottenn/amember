@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Paddle\Billable;
 
+use Laravel\Sanctum\HasApiTokens;
 use TCG\Voyager\Traits\VoyagerUser;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -12,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends \TCG\Voyager\Models\User
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Billable;
 
     /**
      * The attributes that are mass assignable.

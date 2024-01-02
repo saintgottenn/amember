@@ -1,73 +1,42 @@
 <div style="width: 100%;">
     <section class="content container">
         <h1 class="content__title"> Select Bundle or Individual Tools </h1>
-        <h2 class="content__subtitle"> You haven’t selected any items. Item selected <span>0</span></h2>
 
 
         <h3 class="content__block-title">Package Plan</h3>
 
         <div class="plans">
             <div class="row">
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <p class="plans__block-title">Basic Plan</p>
-                        <p class="plans__block-price"><span>$10</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <ul>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Canva</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Grammarly</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Moz</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Semrush</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">UberSuggest</li>
-                        </ul>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
+                @foreach ($packages as $package)
+                    <div class="col-md-3">
+                        <div class="plans__block">
+                            <p class="plans__block-title">{{$package['title']}}</p>
+                            <p class="plans__block-price"><span>${{$package['price']}}</span>/mo</p>
+                            @php
+                                $isInCart = collect(session('cart'))->contains(function ($item) use ($package) {
+                                    return $item['product_id'] === $package['product_id'];
+                                });
+                            @endphp
+
+                            @if ($isInCart)
+                                <a href="{{route('summaryOrder')}}" class="plans__block-btn">Go to the cart</a>
+                            @else
+                               <form action="{{route('cart.add')}}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="productId" value="{{$package['product_id']}}">
+                                    <input type="hidden" name="productType" value="{{'Package'}}">
+                                    <button type="submit" class="plans__block-btn">Add to cart</button>
+                                </form>
+                            @endif
+                            <ul>
+                                @foreach($package['tools_included'] as $tool)
+                                    <li><img src="{{asset($tool->image)}}" alt="{{$tool->title}} logo">{{$tool->title}}</li>
+                                @endforeach
+                            </ul>
+                            <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <p class="plans__block-title">Medium Plan</p>
-                        <p class="plans__block-price"><span>$15</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <ul>
-                            <li><img src="../../img/icons/plans-check-special.svg" alt="check">Everything in Essential</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Majestic</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Moz Pro</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Buzzsumo</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">SpyFu</li>
-                        </ul>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <p class="plans__block-title">Elite Plan</p>
-                        <p class="plans__block-price"><span>$30</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <ul>
-                            <li><img src="../../img/icons/plans-check-special.svg" alt="check">Everything in Standard</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">SEMRush Pro/Guru</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">StoryBlocks</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Jungle Scout</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Canva Pro</li>
-                        </ul>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <p class="plans__block-title">Mega Plan</p>
-                        <p class="plans__block-price"><span>$45</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <ul>
-                            <li><img src="../../img/icons/plans-check-special.svg" alt="check">Everything in Standard</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">SEMRush Pro/Guru</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">StoryBlocks</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Jungle Scout</li>
-                            <li><img src="../../img/icons/plans-check.svg" alt="check">Canva Pro</li>
-                        </ul>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
 
@@ -75,72 +44,34 @@
 
         <div class="plans">
             <div class="row">
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <div class="plans__block-img">
-                            <img src="../../img/plans/plans1.png" alt="plan-img">
+                @foreach($tools as $tool)
+                    <div class="col-md-3">
+                        <div class="plans__block">
+                            <div class="plans__block-img">
+                                <img src="{{asset($tool['image'])}}" alt="plan-img">
+                            </div>
+                            <p class="plans__block-title">{{$tool['title']}}</p>
+                            <p class="plans__block-price"><span>${{$tool['price']}}</span>/mo</p>
+                            @php
+                                $isInCart = collect(session('cart'))->contains(function ($item) use ($tool) {
+                                    return $item['product_id'] === $tool['product_id'];
+                                });
+                            @endphp
+                            
+                            @if ($isInCart)
+                                <a href="{{route('summaryOrder')}}" class="plans__block-btn">Go to the cart</a>
+                            @else
+                                <form action="{{route('cart.add')}}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="productId" value="{{$tool['product_id']}}">
+                                    <input type="hidden" name="productType" value="{{'Tool'}}">
+                                    <button type="submit" class="plans__block-btn">Add to cart</button>
+                                </form>
+                            @endif
+                            <a href="#" class="plans__block-view">View All Features <img src="{{asset('/img/icons/info.svg')}}" alt="check"></a>
                         </div>
-                        <p class="plans__block-title">Essential</p>
-                        <p class="plans__block-price"><span>$3</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <div class="plans__block-img">
-                            <img src="../../img/plans/plans2.png" alt="plan-img">
-                        </div>
-                        <p class="plans__block-title">Essential</p>
-                        <p class="plans__block-price"><span>$3</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <div class="plans__block-img">
-                            <img src="../../img/plans/plans3.png" alt="plan-img">
-                        </div>
-                        <p class="plans__block-title">Essential</p>
-                        <p class="plans__block-price"><span>$5</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <div class="plans__block-img">
-                            <img src="../../img/plans/plans4.png" alt="plan-img">
-                        </div>
-                        <p class="plans__block-title">Essential</p>
-                        <p class="plans__block-price"><span>$5</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <div class="plans__block-img">
-                            <img src="../../img/plans/plans5.png" alt="plan-img">
-                        </div>
-                        <p class="plans__block-title">Essential</p>
-                        <p class="plans__block-price"><span>$7</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="plans__block">
-                        <div class="plans__block-img">
-                            <img src="../../img/plans/plans6.png" alt="plan-img">
-                        </div>
-                        <p class="plans__block-title">Essential</p>
-                        <p class="plans__block-price"><span>$10</span>/mo</p>
-                        <div class="plans__block-btn">Add to cart</div>
-                        <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>

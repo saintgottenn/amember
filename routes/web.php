@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Http\Livewire\Main\Blog;
 use App\Http\Livewire\Auth\Login;
 use App\Http\Livewire\Main\Plans;
@@ -11,12 +12,19 @@ use App\Http\Livewire\Auth\Register;
 use App\Http\Livewire\Main\Products;
 use App\Http\Livewire\Main\Dashboard;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\TestController;
 use App\Http\Livewire\Main\SummaryOrder;
 use App\Http\Livewire\Auth\BusinessPurchase;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Voyager\ToolsController;
+use App\Http\Controllers\Payment\PaymentController;
+use App\Http\Controllers\Payment\RazorpayController;
 use App\Http\Controllers\Voyager\PackagesController;
+use App\Http\Controllers\Voyager\AnalyticsController;
+use App\Http\Controllers\Payment\PaymentWebhookController;
+use App\Http\Controllers\Voyager\UserManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +36,17 @@ use App\Http\Controllers\Voyager\PackagesController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get("/test", function() {
+    return view('test2');
+});
+
+
+
+
+Route::post('/webhook/razorpay', [PaymentWebhookController::class, 'handleRazorpayCallback'])->name('payment.webhook.razorpay'); 
+
+
 
 Route::middleware(['guest'])->group(function() {
     Route::get('/register', Register::class)->name('auth.showRegister');
@@ -50,7 +69,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/archive', Archive::class)->name('archive');
     Route::get('/products', Products::class)->name('products');
     Route::get('/afilate', Afilate::class)->name('afilate');
-    Route::get('/summary', SummaryOrder::class)->name('summaryOrder');
+    Route::get('/cart', SummaryOrder::class)->name('summaryOrder');
     Route::get('/support', Support::class)->name('support');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
@@ -58,6 +77,15 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/user/profile', Profile::class)->name('user.profile');
     Route::post('/user/update-name', [UserController::class, 'updateName'])->name('user.updateName');
     Route::post('/user/update-phone', [UserController::class, 'updatePhone'])->name('user.updatePhone');
+
+    Route::controller(CartController::class)->name('cart.')->group(function() {
+        Route::post('/cart/add', 'add')->name('add');
+        Route::post('/cart/remove', 'remove')->name('remove');
+    });
+
+    Route::name('payment.')->prefix('payment')->group(function() {
+        Route::post('/razorpay',[PaymentController::class, 'payWithRazorpay'])->name('razorpay');
+    });
 });
 
 
@@ -67,6 +95,17 @@ Route::group(['prefix' => 'admin'], function () {
     Route::group(['as' => 'admin.'], function() {
         Route::resource('tools', ToolsController::class);
         Route::resource('packages', PackagesController::class);
+
+        Route::get('/users/{id}', [UserManagementController::class, 'getUserData'])->name('users.userData');
+        Route::post('/users/{id}/update/block', [UserManagementController::class, 'blockUser'])->name('users.update.block');
+        Route::post('/users/{id}/update/unblock', [UserManagementController::class, 'unblockUser'])->name('users.update.unblock');
+        Route::put('/users/{id}/update', [UserManagementController::class, 'update'])->name('users.update');
+
+
+        Route::controller(AnalyticsController::class)->prefix('analytics')->name('analytics.')->group(function() {
+            Route::get('/latest-logins', 'showLatestLogins')->name('showLatestLogins');
+            Route::get('/daily-signups', 'getDailySignups')->name('dailySignups');
+        });
     });
 
 });

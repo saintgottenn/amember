@@ -14,7 +14,7 @@
 
       <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" name="name" class="form-control" id="name" value="{{ $package->name }}" required>
+          <input type="text" name="title" class="form-control" id="name" value="{{ $package->title }}" required>
       </div>
 
       <div class="form-group">
@@ -23,9 +23,26 @@
       </div>
 
       <div class="form-group">
-          <label for="price">Price</label>
+          <label for="price">Default Price</label>
           <input type="number" name="price" class="form-control" id="price" value="{{ $package->price }}" required>
       </div>
+
+      <div id="prices-container" class="mb-3">
+          <label class="form-label">Цены по странам:</label>
+          
+          <div class="form-group mb-2 country-price-group">
+              <select class="form-control country-select" onchange="updateCountryPrices()" style="max-width: 300px;">
+                  <option value="">Choose Country</option>
+                  <option value="US">USA</option>
+                  <option value="GB">UK</option>
+              </select>
+              <input type="number" step="0.01" style="max-width: 300px; display: none;" class="form-control price-input" placeholder="Цена">
+          </div>
+          
+          <button class="btn btn-primary" type="button" onclick="addCountryPrice()">Change or added new price</button>
+      </div>
+
+      <input type="hidden" name="country_prices" id="country-prices" value="{{$countryPrices ?? ''}}">
 
       <div class="form-group">
         <label for="tools_included">Tools</label>
@@ -46,6 +63,60 @@
         $(document).ready(function() {
             $('#tools_included').select2();
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('.country-select').forEach(function(select) {
+              select.addEventListener('change', function() {
+                  this.closest('.country-price-group').querySelector('.price-input').value = '';
+                  updateCountryPrices(); 
+              });
+          });
+      });
+
+      function addCountryPrice() {
+        const country = document.querySelector(".country-select").value;
+        const hiddenField = document.querySelector("#country-prices");
+        let cp = {};
+        
+        const price = document.querySelector(".price-input").value;
+        
+        if (hiddenField && hiddenField.value) {
+            try {
+                cp = JSON.parse(hiddenField.value);
+            } catch (e) {
+                console.error("Ошибка при парсинге JSON: ", e);
+                cp = {};
+            }
+        }
+
+        if (country) {
+            cp[country] = price;
+            hiddenField.value = JSON.stringify(cp); 
+        }
+      }
+
+      function updateCountryPrices() {
+        const hiddenField = document.querySelector("#country-prices").value;
+        const country = document.querySelector(".country-select").value;
+
+        if(country) {
+          document.querySelector(".price-input").style.display = "block";  
+        } else {
+          document.querySelector(".price-input").style.display = "none";  
+        }
+
+        if(hiddenField) {
+          const cp = JSON.parse(hiddenField);
+
+          Object.keys(cp).forEach(item => {
+            if(item === country) {
+              document.querySelector(".price-input").value = cp[item];
+            }
+          });
+        }
+      }
+
+      updateCountryPrices();
     </script>
   @endpush
 @endsection

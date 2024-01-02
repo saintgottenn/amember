@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Voyager;
 
 use App\Models\Tool;
 use App\Models\Package;
+use App\Models\PackagePrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PackageRequest;
 
 class PackagesController extends Controller
 {
@@ -49,22 +51,17 @@ class PackagesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PackageRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'tools_included' => 'required|array',
-        ]);
-
         $package = new Package();
-        $package->name = $request->name;
+        $package->title = $request->title;
         $package->description = $request->description;
         $package->price = $request->price;
         $package->tools_included = json_encode($request->tools_included);
 
         $package->save();
+
+        $this->setCountryPrices($request->country_prices, $package->id);
 
         return redirect()->route('admin.packages.index');
     }
@@ -91,7 +88,9 @@ class PackagesController extends Controller
         $package = Package::find($id);
         $tools = Tool::orderBy('created_at', 'desc')->get();
 
-        return view("voyager::packages.edit", compact('package', 'tools'));
+        $countryPrices = $this->getCountryPrices($package);
+
+        return view("voyager::packages.edit", compact('package', 'tools', 'countryPrices'));
     }
 
     /**
@@ -101,22 +100,18 @@ class PackagesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PackageRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'tools_included' => 'required|array',
-        ]);
 
         $package = Package::find($id);
-        $package->name = $request->name;
+        $package->title = $request->title;
         $package->description = $request->description;
         $package->price = $request->price;
         $package->tools_included = json_encode($request->tools_included);
 
         $package->save();
+        
+        $this->setCountryPrices($request->country_prices, $package->id);
 
         return redirect()->route('admin.packages.index');
     }
@@ -130,5 +125,43 @@ class PackagesController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    private function setCountryPrices($countryPrices, $id)
+    {
+        $countryPrices = json_decode($countryPrices, true) ?? [];
+        
+        $countryPrices = array_filter($countryPrices, function($value) {
+            return !empty($value); 
+        });
+
+        if(!empty($countryPrices)) {
+            foreach($countryPrices as $countryCode => $price) {
+                PackagePrice::updateOrCreate(
+                    ['package_id' => $id, 'country_code' => $countryCode],
+                    ['price' => $price ? $price : 0],
+                );
+            }
+        }
+    }
+
+    private function getCountryPrices($package)
+    {
+        $countryPrices = null;
+
+        if($package) {
+            $prices = $package->prices;
+
+            foreach($prices as $priceObj) {
+                $countryPrices[$priceObj->country_code] = $priceObj->price;
+            }
+        }
+
+        if($countryPrices) {
+            $countryPrices = json_encode($countryPrices);
+        }
+
+        return $countryPrices;
     }
 }

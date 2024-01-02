@@ -14,7 +14,7 @@
         @livewireStyles
         
         @vite('resources/js/app.js')
-
+        @paddleJS
         @stack('styles')
         @stack('header-scripts')
     </head>

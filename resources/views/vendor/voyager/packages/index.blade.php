@@ -25,7 +25,7 @@
         <tbody>
             @foreach($packages as $package)
                 <tr>
-                    <td>{{ $package->name }}</td>
+                    <td>{{ $package->title }}</td>
                     <td>{{ $package->description }}</td>
                     <td>{{ $package->price }}</td>
                     <td>

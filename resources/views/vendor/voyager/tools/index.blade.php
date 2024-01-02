@@ -16,10 +16,8 @@
           <thead>
               <tr>
                   <th>Name</th>
-                  <th>Slug</th>
-                  <th>Price</th>
+                  <th>Default Price</th>
                   <th>Image</th>
-                  <th>Link</th>
                   <th>Benefits</th>
                   <th>Description</th>
                   <th>Actions</th>
@@ -29,13 +27,11 @@
               @foreach($tools as $tool)
                   <tr>
                       <td>{{ $tool->title }}</td>
-                      <td>{{ $tool->slug }}</td>
                       <td>{{ $tool->price }}</td>
                       <td><img src="{{ asset($tool->image) }}" width="100px"></td>
-                      <td>{{ $tool->link }}</td>
                       <td>
-                        @if (json_decode($tool->benefits, true))
-                            @foreach ($tool->benefits as $benefit)
+                        @if (!empty(json_decode($tool->benefits, true)))
+                            @foreach (json_decode($tool->benefits, true) as $benefit)
                                 <div>{{$loop->iteration . '. ' . $benefit}}</div>
                             @endforeach
                         @endif
