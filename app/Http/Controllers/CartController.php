@@ -18,8 +18,6 @@ class CartController extends Controller
             'product_id' => $productId,
             'user_id' => auth()->id(),
         ]);   
-        
-        CartFacade::loadCartItems();
 
         return back();
     }
@@ -32,8 +30,15 @@ class CartController extends Controller
             ->where('product_id', $productId)
             ->delete();
 
-        CartFacade::loadCartItems();
-
         return back();
+    }
+
+    public function sessionReload()
+    {
+        session()->forget('cart');
+
+        return response()->json([
+            'success' => true,
+        ]);
     }
 }

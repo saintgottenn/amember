@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Voyager;
 
 use App\Models\Tool;
+use App\Models\Currency;
 use App\Models\ToolPrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -29,7 +30,9 @@ class ToolsController extends Controller
      */
     public function create()
     {
-        return view("voyager::tools.create");
+        $currencies = Currency::where('is_active', true)->pluck('currency');
+
+        return view("voyager::tools.create", compact('currencies'));
     }
 
     /**
@@ -73,11 +76,7 @@ class ToolsController extends Controller
     private function setCountryPrices($countryPrices, $id)
     {
         $countryPrices = json_decode($countryPrices, true) ?? [];
-
-        $countryPrices = array_filter($countryPrices, function($value) {
-            return !empty($value); 
-        });
-
+        
         if(!empty($countryPrices)) {
             foreach($countryPrices as $countryCode => $price) {
                 ToolPrice::updateOrCreate(
@@ -110,8 +109,10 @@ class ToolsController extends Controller
         $tool = Tool::find($id);
 
         $countryPrices = $this->getCountryPrices($tool);
+
+        $currencies = Currency::where('is_active', true)->pluck('currency');
         
-        return view("voyager::tools.edit", compact('tool', 'countryPrices'));
+        return view("voyager::tools.edit", compact('tool', 'countryPrices', 'currencies'));
     }
 
     private function getCountryPrices($tool)

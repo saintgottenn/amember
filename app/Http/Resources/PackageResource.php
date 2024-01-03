@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Tool;
+use App\Models\Currency;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PackageResource extends JsonResource
@@ -18,11 +19,24 @@ class PackageResource extends JsonResource
         $toolIds = json_decode($this->productable->tools_included, true);
         $tools = Tool::findMany($toolIds);
         
+        $price = $this->productable->price;
+        $currencySymbol = '$';
+
+        if(!isset(session('user_currency')->is_default)) {
+            $multiPrice = $this->productable->prices->firstWhere('country_code', session('user_currency')->currency);
+            
+            if($multiPrice && $multiPrice->price) {
+                $price = $multiPrice->price;
+                $currencySymbol = Currency::where('currency', session('user_currency')->currency)->first()->symbol;    
+            }
+        }
+
         return [
             'id' => $this->productable->id,
             'product_id' => $this->id,
             'title' => $this->productable->title,
-            'price' => $this->productable->price,
+            'price' => $price,
+            'currency_symbol' => $currencySymbol,
             'description' => $this->productable->description,
             'tools_included' => $tools,
         ];

@@ -6,6 +6,7 @@ use App\Models\Cart;
 use Razorpay\Api\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CartResource;
 
 class PaymentController extends Controller
 {
@@ -13,37 +14,38 @@ class PaymentController extends Controller
     {
       $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
 
-      $cartItems = Cart::where('user_id', auth()->id())->get();
+      $cartItems = CartResource::collection(Cart::where('user_id', auth()->id())->with('product.productable.prices')->get())->toArray(request());
+      
+      ['productIds' => $productIds, 'totalCost' => $totalCost] = $this->getPaymentData($cartItems);
 
-      $productIds = $cartItems->pluck('product_id')->implode(", ");
-
-      $totalCost = $cartItems->sum(function ($item) {
-        return $item->product->productable->price;
-      });
-
-      $plan = $api->plan->create([
-        'period' => 'monthly',
-        'interval' => 1,
-        'item' => [
-          'name' => 'Monthly Subscription Plan',
+      $razorpay_order = $api->order->create([
+          'receipt' => 'order_rcptid_11',
           'amount' => $totalCost * 100, 
           'currency' => 'INR',
-        ],
-      ]);
+          'notes' => [
+            'products' => $productIds,
+            'email' => auth()->user()->email,
+            'user_id' => auth()->id(),
+          ],
+        ]);
 
-      $razorpay_subscription = $api->subscription->create([
-        'plan_id' => $plan['id'],
-        'quantity' => 1, 
-        'total_count' => 12, 
-        'customer_notify' => 1, 
-        'notes' => [
-          'products' => $productIds,
-          'email' => auth()->user()->email,
-          'user_id' => auth()->id(),
-        ],
-      ]);
+        return back()->with(compact('razorpay_order'));
+    }
 
-      
-      return back()->with(compact('razorpay_subscription'));
+  
+    protected function getPaymentData($cartItems) 
+    {
+      $productIds = collect($cartItems)->map(function ($item) {
+          return $item['product']['product_id'];
+      })->implode(', ');
+
+      $totalCost = collect($cartItems)->sum(function ($item) {
+        return $item['product']['price'];
+      });
+
+      return [
+        'productIds' => $productIds,
+        'totalCost' => $totalCost
+      ];
     }
 }

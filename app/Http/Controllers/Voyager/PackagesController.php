@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Voyager;
 
 use App\Models\Tool;
 use App\Models\Package;
+use App\Models\Currency;
 use App\Models\PackagePrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -42,7 +43,9 @@ class PackagesController extends Controller
     {
         $tools = Tool::orderBy('created_at', 'desc')->get();
 
-        return view("voyager::packages.create", compact('tools'));
+        $currencies = Currency::where('is_active', true)->pluck('currency');
+
+        return view("voyager::packages.create", compact('tools', 'currencies'));
     }
 
     /**
@@ -89,8 +92,10 @@ class PackagesController extends Controller
         $tools = Tool::orderBy('created_at', 'desc')->get();
 
         $countryPrices = $this->getCountryPrices($package);
+        
+        $currencies = Currency::where('is_active', true)->pluck('currency');
 
-        return view("voyager::packages.edit", compact('package', 'tools', 'countryPrices'));
+        return view("voyager::packages.edit", compact('package', 'tools', 'currencies'));
     }
 
     /**

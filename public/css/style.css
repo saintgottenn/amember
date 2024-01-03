@@ -718,7 +718,7 @@ input:checked + .wrapper__block-switch-round:before {
 .invoices table th {
   text-align: left;
   color: #bbc0c8;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 400;
   padding-bottom: 4px;
 }
@@ -726,7 +726,7 @@ input:checked + .wrapper__block-switch-round:before {
 .invoices table td {
   text-align: left;
   color: #131313;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 400;
   padding-top: 12px;
 }
@@ -808,14 +808,14 @@ input:checked + .wrapper__block-switch-round:before {
 
 .plans__block-price {
   color: #bbc0c8;
-  font-size: 40px;
+  font-size: 30px;
   font-weight: 600;
   margin-bottom: 40px;
 }
 
 .plans__block-price span {
   color: #06f;
-  font-size: 64px;
+  font-size: 44px;
   font-weight: 600;
 }
 
@@ -891,7 +891,7 @@ input:checked + .wrapper__block-switch-round:before {
 
 .summary__block-title {
   color: #131313;
-  font-size: 16px;
+  font-size: 23px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -904,7 +904,7 @@ input:checked + .wrapper__block-switch-round:before {
 
 .summary__block-value {
   color: #131313;
-  font-size: 16px;
+  font-size: 23px;
   font-weight: 600;
   margin-top: 8px;
 }

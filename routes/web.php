@@ -20,7 +20,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Voyager\ToolsController;
 use App\Http\Controllers\Payment\PaymentController;
-use App\Http\Controllers\Payment\RazorpayController;
+use App\Http\Controllers\Voyager\CurrencyController;
 use App\Http\Controllers\Voyager\PackagesController;
 use App\Http\Controllers\Voyager\AnalyticsController;
 use App\Http\Controllers\Payment\PaymentWebhookController;
@@ -36,11 +36,6 @@ use App\Http\Controllers\Voyager\UserManagementController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get("/test", function() {
-    return view('test2');
-});
-
 
 
 
@@ -67,20 +62,21 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/plans', Plans::class)->name('plans');
     Route::get('/blog', Blog::class)->name('blog');
     Route::get('/archive', Archive::class)->name('archive');
-    Route::get('/products', Products::class)->name('products');
     Route::get('/afilate', Afilate::class)->name('afilate');
     Route::get('/cart', SummaryOrder::class)->name('summaryOrder');
     Route::get('/support', Support::class)->name('support');
-
+    
     Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
-
+    
     Route::get('/user/profile', Profile::class)->name('user.profile');
     Route::post('/user/update-name', [UserController::class, 'updateName'])->name('user.updateName');
     Route::post('/user/update-phone', [UserController::class, 'updatePhone'])->name('user.updatePhone');
-
+    Route::get('/user/products', Products::class)->name('products');
+    
     Route::controller(CartController::class)->name('cart.')->group(function() {
         Route::post('/cart/add', 'add')->name('add');
         Route::post('/cart/remove', 'remove')->name('remove');
+        Route::post('/cart/session/reload', 'sessionReload')->name('session.reload');
     });
 
     Route::name('payment.')->prefix('payment')->group(function() {
@@ -105,6 +101,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::controller(AnalyticsController::class)->prefix('analytics')->name('analytics.')->group(function() {
             Route::get('/latest-logins', 'showLatestLogins')->name('showLatestLogins');
             Route::get('/daily-signups', 'getDailySignups')->name('dailySignups');
+        });
+
+        Route::controller(CurrencyController::class)->prefix('currencies')->name('currencies.')->group(function() {
+            Route::get('/', 'index')->name('index');
+            Route::post('/update-currencies', 'updateCurrencies')->name('updateCurrencies');
         });
     });
 

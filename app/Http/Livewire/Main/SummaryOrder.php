@@ -9,11 +9,21 @@ use App\Http\Resources\CartResource;
 class SummaryOrder extends Component
 {
     public $items = [];
+    public $totalPrice = 0;
+    public $highestPrice = 0;
 
     public function mount()
     {
-        $this->items = CartResource::collection(Cart::where('user_id', auth()->id())->with('product.productable')->get())->toArray(request());
+        $this->items = CartResource::collection(Cart::where('user_id', auth()->id())->with('product.productable.prices')->get())->toArray(request());
 
+
+        $this->totalPrice = collect($this->items)->sum(function ($item) {
+            return $item['product']['price'];
+        });
+
+        $this->highestPrice = collect($this->items)->max(function ($item) {
+            return $item['product']['price'];
+        });
     }   
 
     public function render()

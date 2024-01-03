@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Currency;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ToolResource extends JsonResource
@@ -14,11 +15,24 @@ class ToolResource extends JsonResource
      */
     public function toArray($request)
     {
+        $price = $this->productable->price;
+        $currencySymbol = '$';
+
+        if(!isset(session('user_currency')->is_default)) {
+            $multiPrice = $this->productable->prices->firstWhere('country_code', session('user_currency')->currency);
+            
+            if($multiPrice && $multiPrice->price) {
+                $price = $multiPrice->price;
+                $currencySymbol = Currency::where('currency', session('user_currency')->currency)->first()->symbol;    
+            }
+        }
+
         return [
             'id' => $this->productable->id,
             'product_id' => $this->id,
             'title' => $this->productable->title,
-            'price' => $this->productable->price,
+            'price' => $price,
+            'currency_symbol' => $currencySymbol,
             'slug' => $this->productable->title,
             'image' => $this->productable->image,
             'description' => $this->productable->description,

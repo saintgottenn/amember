@@ -19,13 +19,14 @@
       </div>
 
       <div id="prices-container" class="mb-3">
-          <label class="form-label">Цены по странам:</label>
+          <label class="form-label">Price by countries:</label>
           
           <div class="form-group mb-2 country-price-group">
               <select class="form-control country-select" onchange="updateCountryPrices()" style="max-width: 300px;">
                   <option value="">Choose Country</option>
-                  <option value="US">USA</option>
-                  <option value="GB">UK</option>
+                  @foreach ($currencies as $currency)
+                    <option value="{{$currency}}">{{$currency}}</option>  
+                  @endforeach
               </select>
               <input type="number" step="0.01" style="max-width: 300px; display: none;" class="form-control price-input" placeholder="Цена">
           </div>

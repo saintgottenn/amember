@@ -17,10 +17,9 @@ class Plans extends Component
 
     public function mount()
     {
-        $this->tools = ToolResource::collection(Product::where('productable_type', Tool::class)->with('productable')->get())->toArray(request());
+        $this->tools = ToolResource::collection(Product::where('productable_type', Tool::class)->with('productable.prices')->get())->toArray(request());
         
-        $this->packages = PackageResource::collection(Product::where('productable_type', Package::class)->with('productable')->get())->toArray(request());
-        
+        $this->packages = PackageResource::collection(Product::where('productable_type', Package::class)->with('productable.prices')->get())->toArray(request());        
     }
 
     public function render()

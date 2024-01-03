@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources;
 
-
-use App\Http\Resources\ProductResource;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CartResource extends JsonResource
+class PlanSubscriptionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,13 +14,12 @@ class CartResource extends JsonResource
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
-    {   
+    {
         return [
             'id' => $this->id,
-            'product_id' => $this->product_id,
-            'user_id' => $this->user_id,
-            'quantity' => $this->quantity,
-            'created_at' => $this->created_at,
+            'started_at' => $this->started_at,
+            'expires_at' => $this->expires_at,
+            'remaining_days' => Carbon::parse($this->expires_at)->diffInDays(now()),
             'product' => (new ProductResource($this))->toArray(request()),
         ];
     }

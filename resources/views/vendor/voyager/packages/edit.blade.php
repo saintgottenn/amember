@@ -19,7 +19,7 @@
 
       <div class="form-group">
           <label for="description">Description</label>
-          <input type="type" name="description" class="form-control" id="description" value="{{ $package->description }}" required>
+          <textarea name="description" class="form-control" id="description" value="{{ $package->description }}"></textarea>
       </div>
 
       <div class="form-group">
@@ -33,8 +33,9 @@
           <div class="form-group mb-2 country-price-group">
               <select class="form-control country-select" onchange="updateCountryPrices()" style="max-width: 300px;">
                   <option value="">Choose Country</option>
-                  <option value="US">USA</option>
-                  <option value="GB">UK</option>
+                  @foreach ($currencies as $currency)
+                    <option value="{{$currency}}">{{$currency}}</option>  
+                  @endforeach
               </select>
               <input type="number" step="0.01" style="max-width: 300px; display: none;" class="form-control price-input" placeholder="Цена">
           </div>

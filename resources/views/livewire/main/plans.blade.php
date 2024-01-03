@@ -11,7 +11,7 @@
                     <div class="col-md-3">
                         <div class="plans__block">
                             <p class="plans__block-title">{{$package['title']}}</p>
-                            <p class="plans__block-price"><span>${{$package['price']}}</span>/mo</p>
+                            <p class="plans__block-price"><span>{{$package['currency_symbol']}}{{$package['price']}}</span>/mo</p>
                             @php
                                 $isInCart = collect(session('cart'))->contains(function ($item) use ($package) {
                                     return $item['product_id'] === $package['product_id'];
@@ -21,11 +21,11 @@
                             @if ($isInCart)
                                 <a href="{{route('summaryOrder')}}" class="plans__block-btn">Go to the cart</a>
                             @else
-                               <form action="{{route('cart.add')}}" method="POST">
+                               <form action="{{ route('cart.add') }}" method="POST" x-data="{ submitted: false }" @submit="submitted = true">
                                     @csrf
                                     <input type="hidden" name="productId" value="{{$package['product_id']}}">
-                                    <input type="hidden" name="productType" value="{{'Package'}}">
-                                    <button type="submit" class="plans__block-btn">Add to cart</button>
+                                    <input type="hidden" name="productType" value="Package">
+                                    <button type="submit" class="plans__block-btn" :disabled="submitted">Add to cart</button>
                                 </form>
                             @endif
                             <ul>
@@ -51,7 +51,7 @@
                                 <img src="{{asset($tool['image'])}}" alt="plan-img">
                             </div>
                             <p class="plans__block-title">{{$tool['title']}}</p>
-                            <p class="plans__block-price"><span>${{$tool['price']}}</span>/mo</p>
+                            <p class="plans__block-price"><span>{{$tool['currency_symbol']}}{{$tool['price']}}</span>/mo</p>
                             @php
                                 $isInCart = collect(session('cart'))->contains(function ($item) use ($tool) {
                                     return $item['product_id'] === $tool['product_id'];
@@ -61,11 +61,11 @@
                             @if ($isInCart)
                                 <a href="{{route('summaryOrder')}}" class="plans__block-btn">Go to the cart</a>
                             @else
-                                <form action="{{route('cart.add')}}" method="POST">
+                                <form action="{{ route('cart.add') }}" method="POST" x-data="{ submitted: false }" @submit="submitted = true">
                                     @csrf
                                     <input type="hidden" name="productId" value="{{$tool['product_id']}}">
                                     <input type="hidden" name="productType" value="{{'Tool'}}">
-                                    <button type="submit" class="plans__block-btn">Add to cart</button>
+                                    <button  type="submit" class="plans__block-btn" :disabled="submitted">Add to cart</button>
                                 </form>
                             @endif
                             <a href="#" class="plans__block-view">View All Features <img src="{{asset('/img/icons/info.svg')}}" alt="check"></a>
