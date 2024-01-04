@@ -22,6 +22,7 @@ use App\Http\Controllers\Voyager\ToolsController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Voyager\CurrencyController;
 use App\Http\Controllers\Voyager\PackagesController;
+use App\Http\Controllers\Voyager\AffiliateController;
 use App\Http\Controllers\Voyager\AnalyticsController;
 use App\Http\Controllers\Payment\PaymentWebhookController;
 use App\Http\Controllers\Voyager\UserManagementController;
@@ -88,11 +89,14 @@ Route::middleware(['auth'])->group(function() {
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 
+
+    Route::get('/users/{id}', [UserManagementController::class, 'getUserData'])->name('voyager.users.show');
+
     Route::group(['as' => 'admin.'], function() {
         Route::resource('tools', ToolsController::class);
         Route::resource('packages', PackagesController::class);
+        Route::resource('affiliates', AffiliateController::class);
 
-        Route::get('/users/{id}', [UserManagementController::class, 'getUserData'])->name('users.userData');
         Route::post('/users/{id}/update/block', [UserManagementController::class, 'blockUser'])->name('users.update.block');
         Route::post('/users/{id}/update/unblock', [UserManagementController::class, 'unblockUser'])->name('users.update.unblock');
         Route::put('/users/{id}/update', [UserManagementController::class, 'update'])->name('users.update');
@@ -101,6 +105,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::controller(AnalyticsController::class)->prefix('analytics')->name('analytics.')->group(function() {
             Route::get('/latest-logins', 'showLatestLogins')->name('showLatestLogins');
             Route::get('/daily-signups', 'getDailySignups')->name('dailySignups');
+            Route::get('/payments', 'getPayments')->name('payments');
         });
 
         Route::controller(CurrencyController::class)->prefix('currencies')->name('currencies.')->group(function() {

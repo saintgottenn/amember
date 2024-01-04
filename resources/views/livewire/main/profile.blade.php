@@ -120,7 +120,7 @@
                     <div x-show="editing" class="profile-info__main-edit-wrapper">
                         <div style="margin-bottom: 5px;">
                             <input type="text" x-model="newPhone" @keydown.enter="savePhone()" @input="newPhone = newPhone.replace(/\D/g, ''); error = ''">
-                            <button @click="savePhone();">Save</button>
+                            <button @click="savePhone(); editing=false">Save</button>
                         </div>
                         <template x-if="loading">
                             <div class="loader"></div>
@@ -155,7 +155,26 @@
         </form>
     </div>
 
-    <h3 class="content__block-title">Your Card</h3>
+    <h3 class="content__block-title">Affiliate link</h3>
+    @foreach (auth()->user()->affiliateLinks as $link)
+        <div class="affiliate-link__block" x-data="{
+            copy(elementId) {
+                const inputElement = document.getElementById(elementId);
+                inputElement.select();
+                document.execCommand('copy');
+
+                alert('Successfully copied');
+            }
+        }">
+            <input type="text" id="affiliateLink{{ $loop->index }}" value="{{url("/register?affiliate_key={$link->affiliate_link}")}}" class="affiliate-link" readonly>
+            <button @click="copy('affiliateLink{{ $loop->index }}');">Copy</button>
+        </div>
+        <div x-show.transition.duration.500ms="copied" style="display: none;">
+            Link copied to clipboard!
+        </div>
+    @endforeach
+
+    {{-- <h3 class="content__block-title">Your Card</h3>
 
     <div class="row">
         <div class="col-md-4">
@@ -194,6 +213,6 @@
                     12/24
                 </p>
             </div>
-        </div>
+        </div> --}}
     </div>
 </section>

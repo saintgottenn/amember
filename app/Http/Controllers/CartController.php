@@ -30,6 +30,8 @@ class CartController extends Controller
             ->where('product_id', $productId)
             ->delete();
 
+        CartFacade::loadCartItems();
+
         return back();
     }
 

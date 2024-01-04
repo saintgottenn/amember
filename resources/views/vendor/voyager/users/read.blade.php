@@ -16,6 +16,16 @@
    @if($user)
       <div class="card" style="margin-bottom: 10px;">
           <div class="card-body">
+              <h5 class="card-title">Affiliate Links:</h5>
+              <ul class="">
+                @foreach ($user->affiliateLinks as $link)
+                    <li>{{url("/register?affiliate_key={$link->affiliate_link}")}}</li>
+                @endforeach
+              </ul>
+          </div>
+      </div>
+      <div class="card" style="margin-bottom: 10px;">
+          <div class="card-body">
               <h5 class="card-title">Name: {{ $user->name }}</h5>
           </div>
       </div>

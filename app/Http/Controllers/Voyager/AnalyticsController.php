@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Voyager;
 
 use App\Models\User;
+use App\Models\Payment;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -57,5 +59,19 @@ class AnalyticsController extends Controller
                         ->get();
 
         return view("voyager::analytics.daily-signups", compact('signups', 'interval'));
+    }
+
+    public function getPayments()
+    {
+        $payments = Payment::latest()->take(50)->get()->map(function ($payment) {
+            $productIds = json_decode($payment->products, true);
+            $products = Product::findMany($productIds);
+
+            $payment->products = $products;
+
+            return $payment;
+        });
+
+        return view('voyager::analytics.payments', compact('payments'));
     }
 }

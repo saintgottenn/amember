@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Laravel\Paddle\Billable;
+use App\Models\Affiliate;
 
+use Laravel\Paddle\Billable;
+use App\Models\AffiliateLink;
 use Laravel\Sanctum\HasApiTokens;
 use TCG\Voyager\Traits\VoyagerUser;
 use Illuminate\Notifications\Notifiable;
@@ -57,4 +59,15 @@ class User extends \TCG\Voyager\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function affiliateLinks()
+    {
+        return $this->hasMany(AffiliateLink::class, 'user_id');
+    }
+
+    public function referredByAffiliates()
+    {
+        return $this->hasMany(Affiliate::class, 'referred_user_id');
+    }
 }

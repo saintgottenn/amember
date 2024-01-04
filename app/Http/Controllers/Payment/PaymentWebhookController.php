@@ -27,12 +27,12 @@ class PaymentWebhookController extends Controller
             if($data['event'] === 'order.paid') {
                 Payment::create([
                     'user_id' => $paymentData['notes']['user_id'],
-                    'amount' => $paymentData['amount'],
+                    'amount' => $paymentData['amount'] / 100,
                     'currency' => $paymentData['currency'],
                     'products' => json_encode(explode(", ", $paymentData['notes']['products'])),
                 ]);
                 
-
+                
                 $this->subscribeToPlans($paymentData['notes']['products'], $paymentData['notes']['user_id']);
             }
         } 

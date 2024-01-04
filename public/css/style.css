@@ -1761,3 +1761,22 @@ input:checked + .wrapper__block-switch-round:before {
   align-items: center;
   margin-top: -20px;
 }
+
+.affiliate-link__block input {
+  border-radius: 6px;
+  border: 1px solid black;
+  padding: 6px;
+  width: 200px;
+}
+
+.affiliate-link__block {
+  margin: 10px 0;
+  display: flex;
+}
+
+.affiliate-link__block button {
+  border: 1px solid #06f;
+  padding: 10px;
+  border-radius: 6px;
+  margin-left: 5px;
+}
