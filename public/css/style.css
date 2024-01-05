@@ -596,6 +596,9 @@ input:checked + .wrapper__block-switch-round:before {
 }
 .content__block-subtitle img {
   margin-right: 12px;
+  width: 100px;
+  height: 40px;
+  object-fit: cover;
 }
 
 .content__block-plan-title {
@@ -1779,4 +1782,15 @@ input:checked + .wrapper__block-switch-round:before {
   padding: 10px;
   border-radius: 6px;
   margin-left: 5px;
+}
+
+.summary__block-img {
+  width: 200px;
+  height: 90px;
+  margin: 0 auto 15px;
+}
+
+.summary__block-img img {
+  width: 100%;
+  height: 100%;
 }

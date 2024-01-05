@@ -7,11 +7,11 @@
             @foreach($items as $item)
                 <div class="col-md-4" style="margin-top: 40px;">
                     <div class="summary__block">
-                        <div class="summary__block-img">
-                            @if (isset($item['product']['image']))
+                        @if (array_key_exists('image', $item['product']))
+                            <div class="summary__block-img">
                                 <img src="{{asset($item['product']['image'])}}" alt="logo">
-                            @endif
-                        </div>
+                            </div>
+                        @endif
                         <div class="summary__block-title">
                             {{$item['product']['title']}}
                             <form action="{{route('cart.remove')}}" method="POST">

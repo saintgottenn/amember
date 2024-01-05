@@ -30,7 +30,7 @@
                             @endif
                             <ul>
                                 @foreach($package['tools_included'] as $tool)
-                                    <li><img src="{{asset($tool->image)}}" alt="{{$tool->title}} logo">{{$tool->title}}</li>
+                                    <li><img style="width: 40px;height: 20px;display: block;" src="{{asset($tool->image)}}" alt="{{$tool->title}} logo">{{$tool->title}}</li>
                                 @endforeach
                             </ul>
                             <a href="#" class="plans__block-view">View All Features <img src="../../img/icons/info.svg" alt="check"></a>
