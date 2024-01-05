@@ -61,6 +61,7 @@ class PackagesController extends Controller
         $package->description = $request->description;
         $package->price = $request->price;
         $package->tools_included = json_encode($request->tools_included);
+        $package->link = $request->link;
 
         $package->save();
 
@@ -95,7 +96,7 @@ class PackagesController extends Controller
         
         $currencies = Currency::where('is_active', true)->pluck('currency');
 
-        return view("voyager::packages.edit", compact('package', 'tools', 'currencies'));
+        return view("voyager::packages.edit", compact('package', 'tools', 'currencies', 'countryPrices'));
     }
 
     /**
@@ -113,6 +114,7 @@ class PackagesController extends Controller
         $package->description = $request->description;
         $package->price = $request->price;
         $package->tools_included = json_encode($request->tools_included);
+        $package->link = $request->link;
 
         $package->save();
         

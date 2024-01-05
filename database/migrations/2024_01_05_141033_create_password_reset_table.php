@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('affiliate_links', function (Blueprint $table) {
+        Schema::create('password_reset', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->string('affiliate_link')->unique();
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('affiliate_links');
+        Schema::dropIfExists('password_reset');
     }
 };

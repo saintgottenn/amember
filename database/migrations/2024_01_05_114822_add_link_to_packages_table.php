@@ -14,19 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::table('packages', function (Blueprint $table) {
-            //
+            $table->string('link')->nullable()->after('title');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::table('packages', function (Blueprint $table) {
-            //
+            $table->dropColumn('link');
         });
     }
 };

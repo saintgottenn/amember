@@ -9,8 +9,13 @@
       @method('PUT')
 
       <div class="form-group">
-          <label for="name">Name</label>
+          <label for="name">Title</label>
           <input type="text" name="name" class="form-control" id="name" value="{{ $tool->title }}" required>
+      </div>
+
+      <div class="form-group">
+          <label for="link">Link</label>
+          <input type="text" name="link" class="form-control" id="link" value="{{ $tool->link }}" required>
       </div>
 
       <div class="form-group">

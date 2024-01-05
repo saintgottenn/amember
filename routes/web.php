@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\TestController;
 use App\Http\Livewire\Main\SummaryOrder;
+use App\Http\Livewire\Auth\ResetPassword;
+use App\Http\Livewire\Auth\ForgotPassword;
 use App\Http\Livewire\Auth\BusinessPurchase;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\UserController;
@@ -38,10 +40,19 @@ use App\Http\Controllers\Voyager\UserManagementController;
 |
 */
 
+Route::prefix('password')->name('password.')->group(function() {
+    // Route::get('/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('request');
+    // Route::post('/reset', [ResetPasswordController::class, 'reset'])->name('update');
+    
+    // Route::post('/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('email');
+    // Route::get('/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('reset');
+
+    Route::get('/reset/{token}', ResetPassword::class)->name('password.reset');
+    Route::get('/reset', ForgotPassword::class)->name('request');
+});
 
 
 Route::post('/webhook/razorpay', [PaymentWebhookController::class, 'handleRazorpayCallback'])->name('payment.webhook.razorpay'); 
-
 
 
 Route::middleware(['guest'])->group(function() {

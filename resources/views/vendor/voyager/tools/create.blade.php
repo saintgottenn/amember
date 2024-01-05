@@ -7,9 +7,15 @@
   <form action="{{ route('admin.tools.store') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="form-group">
-          <label for="name">Name</label>
+          <label for="name">Title</label>
           <input type="text" name="name" class="form-control" id="name" value="{{old('name')}}" required>
       </div>
+
+       <div class="form-group">
+          <label for="link">Link</label>
+          <input type="text" name="link" class="form-control" id="link" value="{{old('link')}}" required>
+      </div>
+
       
       <div class="form-group">
           <label for="price">Default Price</label>

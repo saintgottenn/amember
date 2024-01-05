@@ -45,10 +45,11 @@ class ToolsController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg',
             'benefits' => 'nullable|array',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'link' => 'required|string',
         ]);
 
         $nonEmptyBenefits = array_filter($request->input('benefits', []), function($value) {
@@ -60,6 +61,7 @@ class ToolsController extends Controller
         $tool->price = $request->price;
         $tool->description = $request->description;
         $tool->benefits = json_encode($nonEmptyBenefits);
+        $tool->link = $request->link;
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('public/tools');
@@ -145,10 +147,11 @@ class ToolsController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg',
             'benefits' => 'nullable|array',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'link' => 'required|string',
         ]);
 
         $nonEmptyBenefits = array_filter($request->input('benefits', []), function($value) {
@@ -160,6 +163,8 @@ class ToolsController extends Controller
         $tool->price = $request->price;
         $tool->description = $request->description;
         $tool->benefits = json_encode($nonEmptyBenefits);
+        $tool->link = $request->link;
+
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('public/tools');

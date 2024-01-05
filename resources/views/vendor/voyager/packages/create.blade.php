@@ -16,6 +16,11 @@
       </div>
 
       <div class="form-group">
+          <label for="link">Link</label>
+          <input type="text" name="link" class="form-control" id="link" value="{{old('link')}}" required>
+      </div>
+
+      <div class="form-group">
           <label for="description">Description</label>
           <textarea name="description" class="form-control" id="description" value="{{old('description')}}"></textarea>
       </div>
