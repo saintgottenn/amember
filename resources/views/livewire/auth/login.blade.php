@@ -37,7 +37,7 @@
                 {{$message}}
             </div>
         @enderror
-        <a href="../password/reset-step1.html" class="wrapper__question">Forgot Password?</a>
+        <a href="{{route('password.request')}}" class="wrapper__question">Forgot Password?</a>
         <div class="row">
             <div class="col-md-12">
                 <button type="submit" class="form-btn full">

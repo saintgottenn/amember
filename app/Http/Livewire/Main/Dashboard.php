@@ -19,6 +19,7 @@ class Dashboard extends Component
     {
         $this->packages = PlanSubscriptionResource::collection(
             PlanSubscription::where('active', true)
+                ->where('user_id', auth()->id())
                 ->whereHas('product', function ($query) {
                     $query->where('productable_type', Package::class);
                 })
@@ -28,6 +29,7 @@ class Dashboard extends Component
 
         $this->tools = PlanSubscriptionResource::collection(
             PlanSubscription::where('active', true)
+                ->where('user_id', auth()->id())
                 ->whereHas('product', function ($query) {
                     $query->where('productable_type', Tool::class);
                 })

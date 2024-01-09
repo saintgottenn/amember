@@ -24,18 +24,16 @@ return new class extends Migration
             $table->string('last_login_at')->nullable();
             $table->string('phone_number')->nullable();
             
-            // Поля для бизнес-аккаунта
-            $table->string('full_name')->nullable(); // Используется для бизнес-аккаунта
+            $table->string('full_name')->nullable(); 
             $table->string('company_name')->nullable();
-            $table->string('vat_number')->nullable(); // VAT Number для бизнеса
+            $table->string('vat_number')->nullable(); 
             $table->text('address')->nullable();
             $table->string('town_city')->nullable();
             $table->string('state_country')->nullable();
             $table->string('postcode')->nullable();
             $table->string('country')->nullable();
             
-            // Дополнительные поля
-            $table->boolean('is_business')->default(false); // Флаг для определения типа аккаунта
+            $table->boolean('is_business')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

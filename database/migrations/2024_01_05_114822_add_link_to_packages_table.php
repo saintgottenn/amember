@@ -14,14 +14,17 @@ return new class extends Migration
     public function up()
     {
         Schema::table('packages', function (Blueprint $table) {
-            $table->string('link')->nullable()->after('title');
+            $table->json('links')->nullable()->after('title');
+            $table->string('main_link')->nullable()->after('links');
+            $table->string('extension')->nullable()->after('main_link');
+            $table->boolean('is_active')->default(true)->after('extension');
         });
     }
 
     public function down()
     {
         Schema::table('packages', function (Blueprint $table) {
-            $table->dropColumn('link');
+            $table->dropColumn(['links', 'main_link', 'extension', 'is_active']); 
         });
     }
 };

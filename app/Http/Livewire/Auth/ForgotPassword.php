@@ -9,10 +9,23 @@ use Illuminate\Support\Facades\Password;
 class ForgotPassword extends Component
 {
     public $input;
+    public $submitted = false;
+
+    public function mount()
+    {
+        if (session()->has('last_reset_mail_sent') && now()->diffInMinutes(session('last_reset_mail_sent')) < 5) {
+            $this->submitted = true;
+        }
+    }
 
     public function submit()
     {
         $this->validate(['input' => 'required']);
+
+        if (session()->has('last_reset_mail_sent') && now()->diffInMinutes(session('last_reset_mail_sent')) < 5) {
+            return $this->addError('input', 'Please wait for 5 minutes before trying again.');
+        }
+
 
         $field = filter_var($this->input, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
         $user = User::where($field, $this->input)->first();
@@ -23,11 +36,9 @@ class ForgotPassword extends Component
 
         $status = Password::sendResetLink(['email' => $user->email]);
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return back()->with('status', $status);
-        } else {
-            return back()->with('error', $status);
-        }
+        session(['last_reset_mail_sent' => now()]);
+
+        $this->submitted = true;
     }
 
     public function render()

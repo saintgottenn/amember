@@ -10,17 +10,74 @@
 
       <div class="form-group">
           <label for="name">Title</label>
-          <input type="text" name="name" class="form-control" id="name" value="{{ $tool->title }}" required>
+          <input type="text" name="name" class="form-control" id="name" value="{{ $tool->title }}" >
       </div>
 
       <div class="form-group">
-          <label for="link">Link</label>
-          <input type="text" name="link" class="form-control" id="link" value="{{ $tool->link }}" required>
+          <label for="link">Main Link</label>
+          <input type="text" name="main_link" class="form-control" id="link" value="{{$tool->main_link}}">
+      </div>
+
+      <div class="form-group" style="margin: 20px;" id="language-link-form">
+        <div class="wrapper">
+          @if ($tool->links)       
+            @foreach (json_decode($tool->links, true) as $lang => $link)
+              <div class="row" style="max-width: 1000px; display: flex; align-items: center;">
+                  <div class="col-md-4" style="padding-left: 0;margin-bottom: 0;">
+                      <div class="form-group">
+                          <label for="link1">Language</label>
+                          <input type="text" class="languages form-control" value="{{$lang}}">
+                      </div>
+                  </div>
+                  <div class="col-md-4" style="margin-bottom: 0;">
+                      <div class="form-group">
+                          <label for="link2">Link</label>
+                          <input type="text" class="links form-control" value="{{$link}}">
+                      </div>
+                  </div>
+                  <div class="col-md-4" style="margin-bottom: 0;">
+                    <button class="btn btn-danger" onclick="removeLangLinkInput(this)" type="button">Remove</button>
+                  </div>
+              </div>  
+            @endforeach
+          @else
+            <div class="row" style="max-width: 1000px; display: flex; align-items: center;">
+                <div class="col-md-4" style="padding-left: 0;margin-bottom: 0;">
+                    <div class="form-group">
+                        <label for="link1">Language</label>
+                        <input type="text" class="languages form-control">
+                    </div>
+                </div>
+                <div class="col-md-4" style="margin-bottom: 0;">
+                    <div class="form-group">
+                        <label for="link2">Link</label>
+                        <input type="text" class="links form-control" >
+                    </div>
+                </div>
+                <div class="col-md-4" style="margin-bottom: 0;">
+                  <button class="btn btn-danger" onclick="removeLangLinkInput(this)" type="button">Remove</button>
+                </div>
+            </div>
+          @endif
+
+        </div>
+
+        <div class="row">
+          <button class="btn btn-primary" type="button" onclick="addLanguageLinkInput();">Add more</button>
+          <button class="btn btn-primary" type="button" onclick="languagesLinksSave();">Save</button>
+        </div>
+
+        <input type="hidden" name="languages_links[]" value="{{$tool->links}}">
+      </div>
+
+      <div class="form-group">
+          <label for="extension">Extension</label>
+          <input type="file" name="extension" class="form-control" id="extension">
       </div>
 
       <div class="form-group">
           <label for="price">Default Price</label>
-          <input type="number" name="price" class="form-control" id="price" value="{{ $tool->price }}" required>
+          <input type="number" name="price" class="form-control" id="price" value="{{ $tool->price }}" >
       </div>
 
       <div id="prices-container" class="mb-3">
@@ -36,7 +93,7 @@
               <input type="number" step="0.01" style="max-width: 300px; display: none;" class="form-control price-input" placeholder="Цена">
           </div>
           
-          <button class="btn btn-primary" type="button" onclick="addCountryPrice()">Change or added new price</button>
+          <button class="btn btn-primary" type="button" onclick="addCountryPrice()">Save</button>
       </div>
 
       <input type="hidden" name="country_prices" id="country-prices" value="{{$countryPrices ?? ''}}">
@@ -66,11 +123,77 @@
           <textarea name="description" class="form-control" id="description">{{ $tool->description }}</textarea>
       </div>
 
+      @if ($errors->any())
+        <div class="alert alert-danger">
+          <ul>
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+        </div>
+      @endif
+
       <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 
   @push('javascript')
     <script>
+      function addLanguageLinkInput() {
+        const container = document.querySelector('#language-link-form .wrapper');
+
+        const newFieldGroup = document.createElement('div');
+        newFieldGroup.classList.add('row', 'mt-2');
+        newFieldGroup.style.maxWidth = '1000px';
+        newFieldGroup.style.display = 'flex';
+        newFieldGroup.style.alignItems = 'center';
+        newFieldGroup.innerHTML = `
+              <div class="col-md-4" style="padding-left: 0;margin-bottom: 0;">
+                  <div class="form-group">
+                      <label for="link1">Language</label>
+                      <input type="text" class="languages form-control" >
+                  </div>
+              </div>
+              <div class="col-md-4" style="margin-bottom: 0;">
+                  <div class="form-group">
+                      <label for="link2">Link</label> 
+                      <input type="text" class="links form-control" >
+                  </div>
+              </div>
+              <div class="col-md-4" style="margin-bottom: 0;">
+                <button class="btn btn-danger" onclick="removeLangLinkInput(this)" type="button">Remove</button>
+              </div>`;
+
+        container.appendChild(newFieldGroup);
+      }
+
+      function languagesLinksSave() {
+        const container = document.querySelector('#language-link-form .wrapper');
+
+        const languages = container.querySelectorAll('.languages');
+        const links = container.querySelectorAll('.links');
+        const languageLinkObject = {};
+
+        languages.forEach((languageInput, index) => {
+            const language = languageInput.value;
+            const link = links[index].value;
+
+            if(language && link) {
+              languageLinkObject[language] = link;
+            }
+        });
+
+        const json = JSON.stringify(languageLinkObject);
+
+        document.querySelector('[name="languages_links[]"]').value = json;
+
+        alert("Successfully saved");
+      }
+
+      function removeLangLinkInput(button)
+      { 
+          button.closest('.row').remove();
+      }
+
       document.getElementById('addBenefit').addEventListener('click', function() {
         var newBenefit = document.createElement('input');
         newBenefit.setAttribute('type', 'text');
@@ -109,7 +232,7 @@
             try {
                 cp = JSON.parse(hiddenField.value);
             } catch (e) {
-                console.error("Ошибка при парсинге JSON: ", e);
+                console.error("JSON parsing error: ", e);
                 cp = {};
             }
         }
@@ -117,6 +240,7 @@
         if (country) {
             cp[country] = price;
             hiddenField.value = JSON.stringify(cp); 
+            alert('Price is successfully saved');
         }
       }
 

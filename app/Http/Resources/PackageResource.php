@@ -17,7 +17,7 @@ class PackageResource extends JsonResource
     public function toArray($request)
     {
         $toolIds = json_decode($this->productable->tools_included, true);
-        $tools = Tool::findMany($toolIds);
+        $tools = Tool::where('is_active', true)->findMany($toolIds);
         
         $price = $this->productable->price;
         $currencySymbol = '$';

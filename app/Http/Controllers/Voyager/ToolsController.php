@@ -49,7 +49,9 @@ class ToolsController extends Controller
             'benefits' => 'nullable|array',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'link' => 'required|string',
+            'languages_links' => 'nullable',
+            'extension' => 'nullable',
+            'main_link' => 'nullable',
         ]);
 
         $nonEmptyBenefits = array_filter($request->input('benefits', []), function($value) {
@@ -61,11 +63,17 @@ class ToolsController extends Controller
         $tool->price = $request->price;
         $tool->description = $request->description;
         $tool->benefits = json_encode($nonEmptyBenefits);
-        $tool->link = $request->link;
+        $tool->links = $request->languages_links[0];
+        $tool->main_link = $request->main_link;
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('public/tools');
             $tool->image = Storage::url($imagePath);
+        }
+
+        if ($request->hasFile('extension')) {
+            $path = $request->file('extension')->store('public/tools/extensions');
+            $tool->extension = Storage::url($path);
         }
 
         $tool->save();
@@ -151,7 +159,9 @@ class ToolsController extends Controller
             'benefits' => 'nullable|array',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'link' => 'required|string',
+            'languages_links' => 'nullable',
+            'extension' => 'nullable',
+            'main_link' => 'nullable',
         ]);
 
         $nonEmptyBenefits = array_filter($request->input('benefits', []), function($value) {
@@ -163,12 +173,18 @@ class ToolsController extends Controller
         $tool->price = $request->price;
         $tool->description = $request->description;
         $tool->benefits = json_encode($nonEmptyBenefits);
-        $tool->link = $request->link;
+        $tool->links = $request->languages_links[0];
+        $tool->main_link = $request->main_link;
 
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('public/tools');
             $tool->image = Storage::url($imagePath);
+        }
+
+        if ($request->hasFile('extension')) {
+            $imagePath = $request->file('extension')->store('public/tools/extensions');
+            $tool->extension = Storage::url($imagePath);
         }
 
         $tool->save();

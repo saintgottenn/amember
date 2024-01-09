@@ -7,7 +7,7 @@
       <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
   @endpush
 
-  <h1>Edit Tool</h1>
+  <h1>Edit Package</h1>
   <form action="{{ route('admin.packages.update', $package->id) }}" method="POST">
       @csrf
       @method('PUT')
@@ -15,11 +15,6 @@
       <div class="form-group">
           <label for="name">Title</label>
           <input type="text" name="title" class="form-control" id="name" value="{{ $package->title }}" required>
-      </div>
-
-      <div class="form-group">
-          <label for="link">Link</label>
-          <input type="text" name="link" class="form-control" id="link" value="{{ $package->link }}" required>
       </div>
 
       <div class="form-group">
@@ -33,7 +28,7 @@
       </div>
 
       <div id="prices-container" class="mb-3">
-          <label class="form-label">Цены по странам:</label>
+          <label class="form-label">Price by countries:</label>
           
           <div class="form-group mb-2 country-price-group">
               <select class="form-control country-select" onchange="updateCountryPrices()" style="max-width: 300px;">
@@ -45,7 +40,7 @@
               <input type="number" step="0.01" style="max-width: 300px; display: none;" class="form-control price-input" placeholder="Цена">
           </div>
           
-          <button class="btn btn-primary" type="button" onclick="addCountryPrice()">Change or added new price</button>
+          <button class="btn btn-primary" type="button" onclick="addCountryPrice()">Save</button>
       </div>
 
       <input type="hidden" name="country_prices" id="country-prices" value="{{$countryPrices ?? ''}}">
@@ -58,6 +53,16 @@
           @endforeach
         </select>
       </div>
+
+      @if ($errors->any())
+        <div class="alert alert-danger">
+          <ul>
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+        </div>
+      @endif
 
       <button type="submit" class="btn btn-primary">Submit</button>
   </form>
@@ -90,7 +95,7 @@
             try {
                 cp = JSON.parse(hiddenField.value);
             } catch (e) {
-                console.error("Ошибка при парсинге JSON: ", e);
+                console.error("JSON parsing error: ", e);
                 cp = {};
             }
         }
@@ -98,6 +103,7 @@
         if (country) {
             cp[country] = price;
             hiddenField.value = JSON.stringify(cp); 
+            alert('Price is successfully saved');
         }
       }
 

@@ -36,6 +36,11 @@
       </div>
       <div class="card mb-4" style="margin-bottom: 10px;">
           <div class="card-body">
+              <h5 class="card-title">Email verified at: {{ $user->email_verified_at ?? 'no'  }}</h5>
+          </div>
+      </div>
+      <div class="card mb-4" style="margin-bottom: 10px;">
+          <div class="card-body">
               <h5 class="card-title">First name: {{ $user->first_name }}</h5>
           </div>
       </div>

@@ -17,6 +17,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Livewire\Main\SummaryOrder;
 use App\Http\Livewire\Auth\ResetPassword;
 use App\Http\Livewire\Auth\ForgotPassword;
+use App\Http\Controllers\DownloadController;
 use App\Http\Livewire\Auth\BusinessPurchase;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\UserController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Voyager\CurrencyController;
 use App\Http\Controllers\Voyager\PackagesController;
 use App\Http\Controllers\Voyager\AffiliateController;
 use App\Http\Controllers\Voyager\AnalyticsController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Payment\PaymentWebhookController;
 use App\Http\Controllers\Voyager\UserManagementController;
 
@@ -40,25 +42,20 @@ use App\Http\Controllers\Voyager\UserManagementController;
 |
 */
 
-Route::prefix('password')->name('password.')->group(function() {
-    // Route::get('/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('request');
-    // Route::post('/reset', [ResetPasswordController::class, 'reset'])->name('update');
-    
-    // Route::post('/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('email');
-    // Route::get('/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('reset');
-
-    Route::get('/reset/{token}', ResetPassword::class)->name('password.reset');
-    Route::get('/reset', ForgotPassword::class)->name('request');
-});
-
 
 Route::post('/webhook/razorpay', [PaymentWebhookController::class, 'handleRazorpayCallback'])->name('payment.webhook.razorpay'); 
 
 
 Route::middleware(['guest'])->group(function() {
+    
     Route::get('/register', Register::class)->name('auth.showRegister');
     Route::get('/login', Login::class)->name('auth.showLogin');
-
+    
+    Route::prefix('password')->name('password.')->group(function() {
+        Route::get('/reset/{token}', ResetPassword::class)->name('reset');
+        Route::get('/reset', ForgotPassword::class)->name('request');
+    });
+    
     Route::get('/register/business-purchase', BusinessPurchase::class)->middleware('redirected')->name('auth.showBusinessPurchase');
     
     Route::controller(AuthController::class)->group(function() {
@@ -92,8 +89,12 @@ Route::middleware(['auth'])->group(function() {
     });
 
     Route::name('payment.')->prefix('payment')->group(function() {
-        Route::post('/razorpay',[PaymentController::class, 'payWithRazorpay'])->name('razorpay');
+        Route::post('/razorpay', [PaymentController::class, 'payWithRazorpay'])->name('razorpay');
     });
+
+    Route::get('email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
+
+    Route::get('/download', [DownloadController::class, 'download'])->name('download');
 });
 
 

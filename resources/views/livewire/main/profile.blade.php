@@ -67,7 +67,7 @@
             </div>
             <div class="profile-info__main-edit el">
                 <div class="profile-info__main-edit-title">
-                    Mail
+                    Email
                 </div>
                 <div class="profile-info__main-edit-name">
                     {{auth()->user()->email}}
@@ -155,6 +155,20 @@
         </form>
     </div>
 
+    <h3 class="content__block-title">Email verification</h3>
+    @if(auth()->user() && !auth()->user()->hasVerifiedEmail())
+        @if($submittedVerification)
+            <button disabled class="affiliate-link__block">Verify Link Sent</button>
+            <p>You can send a verified email link once every 5 minutes.</p>
+        @else
+            <form wire:submit.prevent="verifyEmail">
+                <button type="submit" class="affiliate-link__block">Verify Email</button>
+            </form>
+        @endif
+    @elseif(auth()->user() && auth()->user()->hasVerifiedEmail())
+        <button disabled>Verified</button>
+    @endif
+
     <h3 class="content__block-title">Affiliate link</h3>
     @foreach (auth()->user()->affiliateLinks as $link)
         <div class="affiliate-link__block" x-data="{
@@ -168,9 +182,6 @@
         }">
             <input type="text" id="affiliateLink{{ $loop->index }}" value="{{url("/register?affiliate_key={$link->affiliate_link}")}}" class="affiliate-link" readonly>
             <button @click="copy('affiliateLink{{ $loop->index }}');">Copy</button>
-        </div>
-        <div x-show.transition.duration.500ms="copied" style="display: none;">
-            Link copied to clipboard!
         </div>
     @endforeach
 

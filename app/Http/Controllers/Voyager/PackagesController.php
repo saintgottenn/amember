@@ -25,7 +25,7 @@ class PackagesController extends Controller
             $included = json_decode($package->tools_included, true);
             
             if($included) {
-                $processedIncludes = Tool::whereIn('id', $included)->get();
+                $processedIncludes = Tool::where('is_active', true)->whereIn('id', $included)->get();
 
                 $package['tools_included'] = $processedIncludes;
             }
@@ -41,7 +41,7 @@ class PackagesController extends Controller
      */
     public function create()
     {
-        $tools = Tool::orderBy('created_at', 'desc')->get();
+        $tools = Tool::where('is_active', true)->orderBy('created_at', 'desc')->get();
 
         $currencies = Currency::where('is_active', true)->pluck('currency');
 
@@ -61,7 +61,6 @@ class PackagesController extends Controller
         $package->description = $request->description;
         $package->price = $request->price;
         $package->tools_included = json_encode($request->tools_included);
-        $package->link = $request->link;
 
         $package->save();
 
@@ -90,7 +89,7 @@ class PackagesController extends Controller
     public function edit($id)
     {
         $package = Package::find($id);
-        $tools = Tool::orderBy('created_at', 'desc')->get();
+        $tools = Tool::where('is_active', true)->orderBy('created_at', 'desc')->get();
 
         $countryPrices = $this->getCountryPrices($package);
         
@@ -107,14 +106,12 @@ class PackagesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(PackageRequest $request, $id)
-    {
-
+    {   
         $package = Package::find($id);
         $package->title = $request->title;
         $package->description = $request->description;
         $package->price = $request->price;
         $package->tools_included = json_encode($request->tools_included);
-        $package->link = $request->link;
 
         $package->save();
         
